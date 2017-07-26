@@ -24,4 +24,8 @@ function Entity:update(dt)
   -- Do nothing by default, but we still have something to call
 end
 
+function Entity:getType()
+  return self.type
+end
+
 return Entity

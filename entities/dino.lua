@@ -24,7 +24,7 @@ function Dino:init(world, x, y, w, h)
   self.gravity   = 60
   self.atMaxHeight = false
 
-  -- Set type YO
+  -- Set type 
   self.type = Types.dino
 
   self.world:add(self, self:getRect())
