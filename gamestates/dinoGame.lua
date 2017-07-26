@@ -31,15 +31,31 @@ function dinoGame:enter()
   -- Initialize some useful vars
   self.groundY = gY
 
-  -- TODO: barrier stuff
-  self:addBarrier()
-
-  -- Add instances of our entities to the Entity List
+  -- Add dino and ground
   Entities:addMany({dino, ground})
+
+  Entities:getFirstBarrier()
 end
 
 function dinoGame:update(dt)
+  self:shouldAddBarrier()
   Entities:update(dt)
+end
+
+-- This function adds a barrier (if we should)
+function dinoGame:shouldAddBarrier()
+  lastBarrier = Entities:getLastBarrier()
+
+  -- Add barrier if last barrier is a certain distance from right edge, or
+  -- if there are no current barriers.
+  if lastBarrier then
+    fromEdgeDist = love.graphics.getWidth() - lastBarrier:rightPos()
+    if fromEdgeDist > 100 then -- TODO: constant
+      self:addBarrier()
+    end
+  else
+    self:addBarrier()
+  end
 end
 
 -- This function adds a new barrier
