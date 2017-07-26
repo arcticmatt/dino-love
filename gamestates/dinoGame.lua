@@ -89,7 +89,7 @@ function DinoGame:draw()
   love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
-    love.graphics.print("gameover",10,20)
+    love.graphics.printf("gameover",0,300, love.graphics.getWidth(), "center")
   end
 end
 
