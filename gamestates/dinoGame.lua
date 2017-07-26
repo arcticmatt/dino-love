@@ -10,6 +10,10 @@ local dinoGame = {}
 local Dino   = require("entities.dino")
 local Ground = require("entities.ground")
 
+-- Global vars
+dino = nil
+ground = nil
+
 function dinoGame:enter()
   -- We need collisions
   world = bump.newWorld(16)
@@ -33,6 +37,18 @@ end
 
 function dinoGame:draw()
   Entities:draw()
+end
+
+function dinoGame:keypressed(key)
+  if key == "up" then
+    dino:setDirection(dino:keyToDir(key))
+  end
+end
+
+function dinoGame:keyreleased(key)
+  if key == "up" then
+    dino:setDirection(dino:keyToDir("down"))
+  end
 end
 
 return dinoGame
