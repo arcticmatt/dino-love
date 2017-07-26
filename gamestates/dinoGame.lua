@@ -4,7 +4,7 @@ local Entities = require("entities.Entities")
 local Entity   = require("entities.Entity")
 
 -- Create our Gamestate
-local dinoGame = {}
+local DinoGame = {}
 
 -- Import needed entities
 local Dino    = require("entities.dino")
@@ -15,7 +15,10 @@ local Barrier = require("entities.barrier")
 dino = nil
 ground = nil
 
-function dinoGame:enter()
+function DinoGame:enter()
+  -- Font size is different than menu and gameover screens
+  love.graphics.setFont(love.graphics.newFont(14))
+
   -- We need collisions
   self.world = bump.newWorld(16)
 
@@ -39,7 +42,7 @@ function dinoGame:enter()
   Entities:getFirstBarrier()
 end
 
-function dinoGame:update(dt)
+function DinoGame:update(dt)
   if not Entities:gameover() then
     -- self:shouldAddBarrier()
     Entities:update(dt)
@@ -47,7 +50,7 @@ function dinoGame:update(dt)
 end
 
 -- This function adds a barrier (if we should)
-function dinoGame:shouldAddBarrier()
+function DinoGame:shouldAddBarrier()
   lastBarrier = Entities:getLastBarrier()
 
   -- Add barrier if last barrier is a certain distance from right edge, or
@@ -63,13 +66,13 @@ function dinoGame:shouldAddBarrier()
 end
 
 -- This function adds a new barrier
-function dinoGame:addBarrier()
+function DinoGame:addBarrier()
   local bWidth, bHeight = 30, 60
   newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - bHeight, bWidth, bHeight)
   Entities:add(newBarrier)
 end
 
-function dinoGame:draw()
+function DinoGame:draw()
   Entities:draw()
   if Entities:gameover() then
     love.graphics.setColor({255,0,0})
@@ -77,7 +80,7 @@ function dinoGame:draw()
   end
 end
 
-function dinoGame:keypressed(key)
+function DinoGame:keypressed(key)
   if key == "up" then
     dino:setDirection(dino:keyToDir(key))
   elseif key == "down" then
@@ -85,7 +88,7 @@ function dinoGame:keypressed(key)
   end
 end
 
-function dinoGame:keyreleased(key)
+function DinoGame:keyreleased(key)
   if key == "up" then
     dino:setDirection(dino:keyToDir("down"))
   elseif key == "down" then
@@ -93,4 +96,4 @@ function dinoGame:keyreleased(key)
   end
 end
 
-return dinoGame
+return DinoGame

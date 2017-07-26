@@ -1,9 +1,9 @@
 Gamestate      = require("libs.hump.gamestate")
-local dinoGame = require("gamestates.dinoGame")
+local Menu     = require("gamestates.Menu")
 
 function love.load()
   Gamestate.registerEvents()
-  Gamestate.switch(dinoGame)
+  Gamestate.switch(Menu)
 end
 
 function love.keypressed(key)
