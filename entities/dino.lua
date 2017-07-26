@@ -1,6 +1,7 @@
 local Class  = require("libs.hump.class")
 local Entity = require("entities.Entity")
-local Types = require("entities.Types")
+local Types  = require("entities.Types")
+local Colors = require("utils.Colors")
 
 local Dino = Class{
   __includes = Entity -- Player class inherits our Entity class
@@ -14,7 +15,7 @@ function Dino:init(world, x, y, w, h)
   self.duckHeight  = h / 2
   self.standY      = y
   self.duckY       = y + self.duckHeight
-  self.color = {255,0,0}
+  self.color = Colors.white
   self.direction = Directions.still
 
   -- Movement (only y-direction)

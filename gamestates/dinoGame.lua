@@ -2,6 +2,7 @@ bump      = require("libs.bump.bump")
 Gamestate = require("libs.hump.gamestate")
 local Entities = require("entities.Entities")
 local Entity   = require("entities.Entity")
+local Colors   = require("utils.Colors")
 
 -- Create our Gamestate
 local DinoGame = {}
@@ -16,6 +17,8 @@ dino = nil
 ground = nil
 
 function DinoGame:enter()
+  -- Clear entities (need for restarting, but good practice anyways)
+  Entities:clear()
   -- Font size is different than menu and gameover screens
   love.graphics.setFont(love.graphics.newFont(14))
 
@@ -33,6 +36,8 @@ function DinoGame:enter()
 
   -- Initialize some useful vars
   self.groundY = gY
+  self.paused = false
+  self.score = 0
 
   -- Add dino and ground
   Entities:addMany({dino, ground})
@@ -43,10 +48,16 @@ function DinoGame:enter()
 end
 
 function DinoGame:update(dt)
-  if not Entities:gameover() then
+  if not Entities:gameover() and not self.paused then
     -- self:shouldAddBarrier()
     Entities:update(dt)
+    self:updateScore()
   end
+end
+
+function DinoGame:updateScore()
+  -- Note: we only display the integer part of the score
+  self.score = self.score + 0.2
 end
 
 -- This function adds a barrier (if we should)
@@ -74,9 +85,11 @@ end
 
 function DinoGame:draw()
   Entities:draw()
+  love.graphics.setColor(Colors.white)
+  love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
   if Entities:gameover() then
-    love.graphics.setColor({255,0,0})
-    love.graphics.print("gameover",10,10)
+    love.graphics.setColor(Colors.red)
+    love.graphics.print("gameover",10,20)
   end
 end
 
@@ -93,6 +106,10 @@ function DinoGame:keyreleased(key)
     dino:setDirection(dino:keyToDir("down"))
   elseif key == "down" then
     dino:setDirection(dino:keyToDir("still"))
+  elseif key == "p" then
+    self.paused = not self.paused
+  elseif key == "r" then
+    Gamestate.enter(DinoGame) -- restart
   end
 end
 
