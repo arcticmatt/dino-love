@@ -1,4 +1,5 @@
 local Class = require("libs.hump.class")
+local Types = require("entities.Types")
 
 local Entity = Class{}
 
@@ -8,6 +9,7 @@ function Entity:init(world, x, y, w, h)
   self.y = y
   self.w = w
   self.h = h
+  self.type = Types.entity -- default type
 end
 
 function Entity:getRect()

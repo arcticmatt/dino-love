@@ -7,8 +7,9 @@ local Entity   = require("entities.Entity")
 local dinoGame = {}
 
 -- Import needed entities
-local Dino   = require("entities.dino")
-local Ground = require("entities.ground")
+local Dino    = require("entities.dino")
+local Ground  = require("entities.ground")
+local Barrier = require("entities.barrier")
 
 -- Global vars
 dino = nil
@@ -16,16 +17,22 @@ ground = nil
 
 function dinoGame:enter()
   -- We need collisions
-  world = bump.newWorld(16)
+  self.world = bump.newWorld(16)
 
   -- Initialize our Entity System
   Entities:enter(world)
   local gWidth, gHeight = love.graphics.getWidth(), 30
   local gX, gY          = 0, love.graphics.getHeight() - gHeight
-  ground = Ground(world, gX, gY, gWidth, gHeight)
+  ground = Ground(self.world, gX, gY, gWidth, gHeight)
   local dWidth, dHeight = 30, 60
   local dX, dY          = 20, gY - dHeight
-  dino = Dino(world, dX, dY, dWidth, dHeight)
+  dino = Dino(self.world, dX, dY, dWidth, dHeight)
+
+  -- Initialize some useful vars
+  self.groundY = gY
+
+  -- TODO: barrier stuff
+  self:addBarrier()
 
   -- Add instances of our entities to the Entity List
   Entities:addMany({dino, ground})
@@ -33,6 +40,13 @@ end
 
 function dinoGame:update(dt)
   Entities:update(dt)
+end
+
+-- This function adds a new barrier
+function dinoGame:addBarrier()
+  local bWidth, bHeight = 30, 60
+  newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - bHeight, bWidth, bHeight)
+  Entities:add(newBarrier)
 end
 
 function dinoGame:draw()

@@ -2,23 +2,29 @@ local Class  = require("libs.hump.class")
 local Entity = require("entities.Entity")
 local Types = require("entities.Types")
 
-local Ground = Class{
+local Barrier = Class{
   __includes = Entity -- Ground class inherits our Entity class
 }
 
-function Ground:init(world, x, y, w, h)
+function Barrier:init(world, x, y, w, h)
   Entity.init(self, world, x, y, w, h)
-  self.color = {0,0,255}
+  self.color = {0,255,0}
 
   -- Set type
-  self.type = Types.ground
+  self.type = Types.barrier
 
   self.world:add(self, self:getRect())
 end
 
-function Ground:draw()
+function Barrier:update(dt)
+  -- For now, just move it to the left
+  self.x = self.x - 100 * dt
+  self.world:update(self, self:getRect())
+end
+
+function Barrier:draw()
   love.graphics.setColor(unpack(self.color))
   love.graphics.rectangle("fill", self:getRect())
 end
 
-return Ground
+return Barrier

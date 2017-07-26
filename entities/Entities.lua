@@ -33,6 +33,9 @@ function Entities:removeAt(index)
   table.remove(self.entityList, index)
 end
 
+-- Remove rightmost barrier
+-- function Entities:removeFirstBarrier()
+
 function Entities:clear()
   self.world = nil
   self.entityList = {}

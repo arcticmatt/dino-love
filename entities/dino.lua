@@ -1,5 +1,6 @@
 local Class  = require("libs.hump.class")
 local Entity = require("entities.Entity")
+local Types = require("entities.Types")
 
 local Dino = Class{
   __includes = Entity -- Player class inherits our Entity class
@@ -23,12 +24,10 @@ function Dino:init(world, x, y, w, h)
   self.gravity   = 60
   self.atMaxHeight = false
 
-  self.world:add(self, self:getRect())
+  -- Set type
+  self.type = Types.dino
 
-  print("standHeight", self.standHeight)
-  print("standY", self.standY)
-  print("duckHeight", self.duckHeight)
-  print("duckY", self.duckY)
+  self.world:add(self, self:getRect())
 end
 
 -- "item" parameter (Dino object) is implicit
@@ -80,9 +79,7 @@ function Dino:update(dt)
 
   -- MOVE dino, taking into account COLLISIONS
   local goalY = self.y + self.yVelocity
-  print("1) self.y", self.y)
   _, self.y, collisions, len = self.world:move(self, self.x, goalY, self.collisionFilter)
-  print("2) self.y", self.y)
 
   for i, collision in ipairs(collisions) do
     if collision.normal.y == -1 then -- dino hit the ground
