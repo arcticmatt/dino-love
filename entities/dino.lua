@@ -24,20 +24,10 @@ function Dino:init(world, x, y, w, h)
   self.gravity   = 60
   self.atMaxHeight = false
 
-  -- Set type 
+  -- Set type
   self.type = Types.dino
 
   self.world:add(self, self:getRect())
-end
-
--- "item" parameter (Dino object) is implicit
-function Dino:collisionFilter(other)
-  local x, y, w, h = self.world:getRect(other)
-  local dinoBottom = self.y + self.h
-
-  if dinoBottom >= y then -- bottom of player collides w/top of ground
-    return 'slide'
-  end
 end
 
 function Dino:standOrDuck()
@@ -79,10 +69,10 @@ function Dino:update(dt)
 
   -- MOVE dino, taking into account COLLISIONS
   local goalY = self.y + self.yVelocity
-  _, self.y, collisions, len = self.world:move(self, self.x, goalY, self.collisionFilter)
+  self.x, self.y, collisions, len = self.world:move(self, self.x, goalY)
 
-  for i, collision in ipairs(collisions) do
-    if collision.normal.y == -1 then -- dino hit the ground
+  for i, c in ipairs(collisions) do
+    if c.other:getType() == Types.ground and c.normal.y == -1 then -- dino hit the ground
       self.hasReachedMax = false
       if self:isDir(Directions.down) then
         self.direction = Directions.still

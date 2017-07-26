@@ -34,12 +34,16 @@ function dinoGame:enter()
   -- Add dino and ground
   Entities:addMany({dino, ground})
 
+  self:addBarrier()
+
   Entities:getFirstBarrier()
 end
 
 function dinoGame:update(dt)
-  self:shouldAddBarrier()
-  Entities:update(dt)
+  if not Entities:gameover() then
+    -- self:shouldAddBarrier()
+    Entities:update(dt)
+  end
 end
 
 -- This function adds a barrier (if we should)
@@ -67,6 +71,10 @@ end
 
 function dinoGame:draw()
   Entities:draw()
+  if Entities:gameover() then
+    love.graphics.setColor({255,0,0})
+    love.graphics.print("gameover",10,10)
+  end
 end
 
 function dinoGame:keypressed(key)

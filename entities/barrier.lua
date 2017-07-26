@@ -14,6 +14,8 @@ function Barrier:init(world, x, y, w, h)
   -- Set type
   self.type = Types.barrier
 
+  self.gameover = false
+
   self.world:add(self, self:getRect())
 end
 
@@ -31,8 +33,13 @@ end
 
 function Barrier:update(dt)
   -- For now, just move it to the left
-  self.x = self.x - self.speed * dt
-  self.world:update(self, self:getRect())
+  self.x, self.y, collisions = self.world:move(self, self.x - self.speed * dt, self.y)
+
+  for i, c in pairs(collisions) do
+    if c.other:getType() == Types.dino then
+      self.gameover = true
+    end
+  end
 end
 
 function Barrier:draw()

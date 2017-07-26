@@ -65,6 +65,13 @@ function Entities:removeFirstBarrier()
   end
 end
 
+function Entities:gameover()
+  for i, e in ipairs(self.entityList) do
+    if e.gameover == true then return e.gameover end
+  end
+  return false
+end
+
 function Entities:clear()
   self.world = nil
   self.entityList = {}
