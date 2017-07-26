@@ -42,12 +42,16 @@ end
 function dinoGame:keypressed(key)
   if key == "up" then
     dino:setDirection(dino:keyToDir(key))
+  elseif key == "down" then
+    dino:setDirection(dino:keyToDir("duck"))
   end
 end
 
 function dinoGame:keyreleased(key)
   if key == "up" then
     dino:setDirection(dino:keyToDir("down"))
+  elseif key == "down" then
+    dino:setDirection(dino:keyToDir("still"))
   end
 end
 
