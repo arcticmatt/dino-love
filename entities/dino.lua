@@ -20,10 +20,11 @@ function Dino:init(world, x, y, w, h)
 
   -- Movement (only y-direction)
   self.yVelocity = 0
-  self.yAcc      = 300
-  self.yMaxSpeed = 15
-  self.gravity   = 60
+  self.yAcc      = 600
+  self.yMaxSpeed = 20
+  self.gravity   = 70
   self.atMaxHeight = false
+  self.friction  = 5 -- air friction???
 
   -- Set type
   self.type = Types.dino
@@ -57,6 +58,9 @@ function Dino:update(dt)
       self.direction = Directions.down
     end
   end
+
+  -- Apply FRICTION
+  self.yVelocity = self.yVelocity * (1 - math.min(dt * self.friction, 1))
 
   -- Apply GRAVITY
   if self:isDir(Directions.still) or self:isDir(Directions.duck) then
@@ -94,9 +98,9 @@ end
 function Dino:setDirection(newDir)
   if newDir == Directions.up and self:isDir(Directions.still) then
     self.direction = newDir
-  elseif newDir == Directions.down then
+  elseif newDir == Directions.duck and self:isDir(Directions.still) then
     self.direction = newDir
-  else
+  elseif newDir == Directions.down or newDir == Directions.still then
     self.direction = newDir
   end
 end

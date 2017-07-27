@@ -20,7 +20,7 @@ local MAX_ENTRIES = 5
 
 -- Level stuff
 -- TODO: tweak
-local levelDiff = 10
+local levelDiff = 100
 local baseSpeed = 350
 
 -- Global vars
@@ -91,8 +91,8 @@ function DinoGame:updateSpeed()
   -- Increase speed by 100 every time the score goes up by 300
   -- i.e. increase = (score / 300) * 100
   local increase = (self.score / 3) * 1
-  -- Cap speed at 550
-  self.speed = math.min(baseSpeed + increase, 550)
+  -- Cap speed at 600
+  self.speed = math.min(baseSpeed + increase, 600)
 end
 
 -- This function adds a barrier (if we should)
@@ -131,17 +131,17 @@ function DinoGame:draw()
   love.graphics.print(math.floor(self.speed), 10, 25)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
-    love.graphics.printf("gameover",0,200, love.graphics.getWidth(), "center")
+    love.graphics.printf("gameover",0,150, love.graphics.getWidth(), "center")
     -- Save and display high scores
     local highscores = self:getHighscores()
     love.graphics.setColor(Colors.green)
     if #highscores < MAX_ENTRIES or self.score > highscores[#highscores] then
       love.graphics.printf(string.format("New highscore! %d", self.score),
-                           0,225, love.graphics.getWidth(), "center")
+                           0,175, love.graphics.getWidth(), "center")
     end
     for k,v in ipairs(highscores) do
       local scoreStr = string.format("%d) %d", k, v)
-      love.graphics.printf(scoreStr,0,225 + 25 * k, love.graphics.getWidth(), "center")
+      love.graphics.printf(scoreStr,0,175 + 25 * k, love.graphics.getWidth(), "center")
     end
   end
 end
