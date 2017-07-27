@@ -20,8 +20,8 @@ local MAX_ENTRIES = 5
 
 -- Level stuff
 -- TODO: tweak
-local levelDiff = 50
-local baseSpeed = 300
+local levelDiff = 10
+local baseSpeed = 350
 
 -- Global vars
 dino = nil
@@ -31,6 +31,7 @@ function DinoGame:enter()
   -- Restart stuff
   -- Clear entities (need for restarting, but good practice anyways)
   Entities:clear()
+  self:saveScore()
 
   -- Font size is different than menu and gameover screens
   love.graphics.setFont(love.graphics.newFont(14))
@@ -87,11 +88,11 @@ function DinoGame:updateLevel()
 end
 
 function DinoGame:updateSpeed()
-  -- Increase speed by 100 every time the score goes up by 250
-  -- i.e. increase = (score / 250) * 100
-  local increase = (self.score / 5) * 2
-  -- Cap speed at 600
-  self.speed = math.min(baseSpeed + increase, 600)
+  -- Increase speed by 100 every time the score goes up by 300
+  -- i.e. increase = (score / 300) * 100
+  local increase = (self.score / 3) * 1
+  -- Cap speed at 550
+  self.speed = math.min(baseSpeed + increase, 550)
 end
 
 -- This function adds a barrier (if we should)
@@ -132,12 +133,15 @@ function DinoGame:draw()
     love.graphics.setColor(Colors.red)
     love.graphics.printf("gameover",0,200, love.graphics.getWidth(), "center")
     -- Save and display high scores
-    self:saveScore()
     local highscores = self:getHighscores()
     love.graphics.setColor(Colors.green)
+    if #highscores < MAX_ENTRIES or self.score > highscores[#highscores] then
+      love.graphics.printf(string.format("New highscore! %d", self.score),
+                           0,225, love.graphics.getWidth(), "center")
+    end
     for k,v in ipairs(highscores) do
       local scoreStr = string.format("%d) %d", k, v)
-      love.graphics.printf(scoreStr,0,200 + 25 * k, love.graphics.getWidth(), "center")
+      love.graphics.printf(scoreStr,0,225 + 25 * k, love.graphics.getWidth(), "center")
     end
   end
 end
@@ -162,7 +166,11 @@ function DinoGame:keyreleased(key)
   end
 end
 
--- Called in DinoGame:draw() when we die
+function DinoGame:quit()
+  self:saveScore()
+end
+
+-- Call when we quit or restart
 function DinoGame:saveScore()
   if self.score then
     local savedTable = self:getHighscores()
