@@ -49,6 +49,10 @@ function Dino:standOrDuck()
 end
 
 function Dino:update(dt)
+  -- Handle key DOWNS
+  if love.keyboard.isDown("up") then self:setDirection(Directions.up) end
+  if love.keyboard.isDown("down") then self:setDirection(Directions.duck) end
+
   -- Handle going UP
   if self:isDir(Directions.up) then
     if -self.yVelocity < self.yMaxSpeed and not self.hasReachedMax then
@@ -94,7 +98,7 @@ function Dino:isDir(dir)
   return self.direction == dir
 end
 
--- Used for handling key presses
+-- Used for handling key presses/downs
 function Dino:setDirection(newDir)
   if newDir == Directions.up and self:isDir(Directions.still) then
     self.direction = newDir

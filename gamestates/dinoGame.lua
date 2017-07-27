@@ -118,8 +118,10 @@ function DinoGame:addBarrier()
   local level = Levels[self.level]
   local width = math.random(unpack(level.widths))
   local height = math.random(unpack(level.heights))
+  local y = self.groundY - height
+  if math.random() < .25 then y = y - 50 end
 
-  newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - height, width, height)
+  newBarrier = Barrier(self.world, love.graphics.getWidth(), y, width, height)
   newBarrier:setSpeed(self.speed)
   Entities:add(newBarrier)
 end
@@ -131,17 +133,19 @@ function DinoGame:draw()
   love.graphics.print(math.floor(self.speed), 10, 25)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
-    love.graphics.printf("gameover",0,150, love.graphics.getWidth(), "center")
+    local y = 125
+    local inc = 25
+    love.graphics.printf("gameover",0,y, love.graphics.getWidth(), "center")
     -- Save and display high scores
     local highscores = self:getHighscores()
     love.graphics.setColor(Colors.green)
     if #highscores < MAX_ENTRIES or self.score > highscores[#highscores] then
       love.graphics.printf(string.format("New highscore! %d", self.score),
-                           0,175, love.graphics.getWidth(), "center")
+                           0,y + inc, love.graphics.getWidth(), "center")
     end
     for k,v in ipairs(highscores) do
       local scoreStr = string.format("%d) %d", k, v)
-      love.graphics.printf(scoreStr,0,175 + 25 * k, love.graphics.getWidth(), "center")
+      love.graphics.printf(scoreStr,0,y + inc + inc * k, love.graphics.getWidth(), "center")
     end
   end
 end
