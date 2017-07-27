@@ -34,6 +34,13 @@ function Dino:init(world, x, y, w, h)
   self.world:add(self, self:getRect())
 end
 
+function Dino:collisionFilter(other)
+  if other:getType() == Types.ground then return "slide"
+  elseif other:getType() == Types.barrier then return "touch"
+  else return nil
+  end
+end
+
 function Dino:standOrDuck()
   if self:isDir(Directions.duck) then
     self.h = self.duckHeight
@@ -80,7 +87,7 @@ function Dino:update(dt)
 
   -- MOVE dino, taking into account COLLISIONS
   local goalY = self.y + self.yVelocity
-  self.x, self.y, collisions, len = self.world:move(self, self.x, goalY)
+  self.x, self.y, collisions, len = self.world:move(self, self.x, goalY, self.collisionFilter)
 
   for i, c in ipairs(collisions) do
     if c.other:getType() == Types.barrier then
