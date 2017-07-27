@@ -5,8 +5,8 @@ Chrome's no-wifi game made with [LÖVE](https://love2d.org/)
 
 ## installation
 If you're installing on a mac, then you can [use the binary attached to the Github release](#github-release-binaries). 
-Otherwise, you should [install LÖVE](https://love2d.org/) and run
-see the [corresponding instructions](#install with LÖVE).
+Otherwise, you should [install LÖVE](https://love2d.org/) and
+see the [corresponding instructions](#install-with-LÖVE).
 
 #### github release binaries 
 
