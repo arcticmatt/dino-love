@@ -32,6 +32,12 @@ function Barrier:offRight()
   return self:rightPos() < 0
 end
 
+-- Not actually required b/c state is public, but I like having a setter function
+-- anyways.
+function Barrier:setSpeed(s)
+  self.speed = s
+end
+
 function Barrier:update(dt)
   -- For now, just move it to the left
   self.x, self.y, collisions = self.world:move(self, self.x - self.speed * dt, self.y)

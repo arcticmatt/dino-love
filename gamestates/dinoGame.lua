@@ -20,7 +20,8 @@ local MAX_ENTRIES = 5
 
 -- Level stuff
 -- TODO: tweak
-local levelDiff = 100
+local levelDiff = 50
+local baseSpeed = 300
 
 -- Global vars
 dino = nil
@@ -30,7 +31,6 @@ function DinoGame:enter()
   -- Restart stuff
   -- Clear entities (need for restarting, but good practice anyways)
   Entities:clear()
-  self:saveScore()
 
   -- Font size is different than menu and gameover screens
   love.graphics.setFont(love.graphics.newFont(14))
@@ -47,7 +47,7 @@ function DinoGame:enter()
   local gX, gY          = 0, love.graphics.getHeight() - gHeight
   ground = Ground(self.world, gX, gY, gWidth, gHeight)
   local dWidth, dHeight = 30, 60
-  local dX, dY          = 20, gY - dHeight
+  local dX, dY          = 40, gY - dHeight
   dino = Dino(self.world, dX, dY, dWidth, dHeight)
 
   -- Initialize some useful vars
@@ -56,6 +56,7 @@ function DinoGame:enter()
   self.score = 0
   self.scoreTable = {}
   self.level = 1 -- one-indexing!!!
+  self.speed = baseSpeed -- increases with score
 
   -- Add dino and ground
   Entities:addMany({dino, ground})
@@ -69,6 +70,7 @@ function DinoGame:update(dt)
     Entities:update(dt)
     self:updateScore()
     self:updateLevel()
+    self:updateSpeed()
   end
 end
 
@@ -82,6 +84,14 @@ function DinoGame:updateLevel()
   local level = math.ceil(self.score / levelDiff)
   if level > #Levels then level = #Levels end
   self.level = level
+end
+
+function DinoGame:updateSpeed()
+  -- Increase speed by 100 every time the score goes up by 250
+  -- i.e. increase = (score / 250) * 100
+  local increase = (self.score / 5) * 2
+  -- Cap speed at 600
+  self.speed = math.min(baseSpeed + increase, 600)
 end
 
 -- This function adds a barrier (if we should)
@@ -109,6 +119,7 @@ function DinoGame:addBarrier()
   local height = math.random(unpack(level.heights))
 
   newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - height, width, height)
+  newBarrier:setSpeed(self.speed)
   Entities:add(newBarrier)
 end
 
@@ -116,10 +127,12 @@ function DinoGame:draw()
   Entities:draw()
   love.graphics.setColor(Colors.white)
   love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
+  love.graphics.print(math.floor(self.speed), 10, 25)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
     love.graphics.printf("gameover",0,200, love.graphics.getWidth(), "center")
-    -- Display high scores
+    -- Save and display high scores
+    self:saveScore()
     local highscores = self:getHighscores()
     love.graphics.setColor(Colors.green)
     for k,v in ipairs(highscores) do
@@ -149,13 +162,7 @@ function DinoGame:keyreleased(key)
   end
 end
 
-function DinoGame:quit()
-  -- Game won't be re-entered if we're quitting, so (potentially) save the
-  -- current score
-  self:saveScore()
-end
-
--- Called both when entering (to handle restarts) and when quitting
+-- Called in DinoGame:draw() when we die
 function DinoGame:saveScore()
   if self.score then
     local savedTable = self:getHighscores()
