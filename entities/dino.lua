@@ -28,6 +28,8 @@ function Dino:init(world, x, y, w, h)
   -- Set type
   self.type = Types.dino
 
+  self.gameover = false
+
   self.world:add(self, self:getRect())
 end
 
@@ -73,7 +75,9 @@ function Dino:update(dt)
   self.x, self.y, collisions, len = self.world:move(self, self.x, goalY)
 
   for i, c in ipairs(collisions) do
-    if c.other:getType() == Types.ground and c.normal.y == -1 then -- dino hit the ground
+    if c.other:getType() == Types.barrier then
+      self.gameover = true
+    elseif c.other:getType() == Types.ground and c.normal.y == -1 then -- dino hit the ground
       self.hasReachedMax = false
       if self:isDir(Directions.down) then
         self.direction = Directions.still
