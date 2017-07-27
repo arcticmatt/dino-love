@@ -16,18 +16,14 @@ function Barrier:init(world, x, y, w, h)
   self.type = Types.barrier
 
   self.gameover = false
-
-  self.world:add(self, self:getRect())
 end
 
+-- Helper function to get position of right side
 function Barrier:rightPos()
   return self.x + self.w
 end
 
--- function Barrier:leftPos()
---   return self.x
--- end
-
+-- Helper function to see if the barrier is offscreen
 function Barrier:offRight()
   return self:rightPos() < 0
 end
@@ -39,9 +35,10 @@ function Barrier:setSpeed(s)
 end
 
 function Barrier:update(dt)
-  -- For now, just move it to the left
+  -- Move left
   self.x, self.y, collisions = self.world:move(self, self.x - self.speed * dt, self.y)
 
+  -- Handle collisions
   for i, c in pairs(collisions) do
     if c.other:getType() == Types.dino then
       self.gameover = true

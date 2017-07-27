@@ -15,25 +15,31 @@ end
 -- entityList is an array. This is important; we have order.
 function Entities:add(entity)
   table.insert(self.entityList, entity)
+  -- IMPORTANT! Entities deals with adding/removing Entity objects from the world!
+  self.world:add(entity, entity:getRect())
 end
 
 function Entities:addMany(entities)
   for k, entity in pairs(entities) do
-    table.insert(self.entityList, entity)
+    self:add(entity)
   end
 end
 
+-- Not currently used
 function Entities:remove(entity)
   for i, e in ipairs(self.entityList) do
     if e == entity then
       table.remove(self.entityList, i)
+      self.world:remove(e)
       return
     end
   end
 end
 
+-- Not currently used
 function Entities:removeAt(index)
-  table.remove(self.entityList, index)
+  e = table.remove(self.entityList, index)
+  self.world:remove(e)
 end
 
 -- Get rightmost barrier
@@ -62,9 +68,12 @@ function Entities:removeFirstBarrier()
   assert(e:getType() == Types.barrier)
   if e:offRight() then
     table.remove(self.entityList, i)
+    -- IMPORTANT! remove from world too
+    self.world:remove(e)
   end
 end
 
+-- Check if any of the entities indicates gameover
 function Entities:gameover()
   for i, e in ipairs(self.entityList) do
     if e.gameover == true then return e.gameover end

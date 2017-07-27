@@ -30,8 +30,6 @@ function Dino:init(world, x, y, w, h)
   self.type = Types.dino
 
   self.gameover = false
-
-  self.world:add(self, self:getRect())
 end
 
 function Dino:collisionFilter(other)
@@ -80,15 +78,14 @@ function Dino:update(dt)
     self.yVelocity = self.yVelocity + self.gravity * dt
   end
 
-
   -- Handle ducking/not ducking
-  -- Need to do this after moving, otherwise stuff gets messed up
   self:standOrDuck()
 
   -- MOVE dino, taking into account COLLISIONS
   local goalY = self.y + self.yVelocity
   self.x, self.y, collisions, len = self.world:move(self, self.x, goalY, self.collisionFilter)
 
+  -- Handle COLLISIONS
   for i, c in ipairs(collisions) do
     if c.other:getType() == Types.barrier then
       self.gameover = true
@@ -101,6 +98,7 @@ function Dino:update(dt)
   end
 end
 
+-- Helper function
 function Dino:isDir(dir)
   return self.direction == dir
 end
@@ -121,6 +119,7 @@ function Dino:draw()
   love.graphics.rectangle("fill", self:getRect())
 end
 
+-- Used by DinoGame Gamestate
 function Dino:keyToDir(key)
   if key == "up" then
     return Directions.up

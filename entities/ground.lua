@@ -13,8 +13,6 @@ function Ground:init(world, x, y, w, h)
 
   -- Set type
   self.type = Types.ground
-
-  self.world:add(self, self:getRect())
 end
 
 function Ground:draw()

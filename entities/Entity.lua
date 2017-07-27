@@ -3,6 +3,7 @@ local Types = require("entities.Types")
 
 local Entity = Class{}
 
+-- Superclass of all entities
 function Entity:init(world, x, y, w, h)
   self.world = world
   self.x = x

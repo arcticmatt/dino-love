@@ -42,7 +42,7 @@ function DinoGame:enter()
   self.world = bump.newWorld(16)
 
   -- Initialize our Entity System
-  Entities:enter(world)
+  Entities:enter(self.world)
   local gWidth, gHeight = love.graphics.getWidth(), 30
   local gX, gY          = 0, love.graphics.getHeight() - gHeight
   ground = Ground(self.world, gX, gY, gWidth, gHeight)
@@ -60,8 +60,6 @@ function DinoGame:enter()
 
   -- Add dino and ground
   Entities:addMany({dino, ground})
-
-  Entities:getFirstBarrier()
 end
 
 function DinoGame:update(dt)
@@ -71,6 +69,7 @@ function DinoGame:update(dt)
     self:updateScore()
     self:updateLevel()
     self:updateSpeed()
+    Entities:removeFirstBarrier()
   end
 end
 
