@@ -4,6 +4,7 @@ local serpent   = require("libs.serpent.src.serpent")
 local Entities  = require("entities.Entities")
 local Entity    = require("entities.Entity")
 local Colors    = require("utils.Colors")
+local Levels    = require("utils.Levels")
 
 -- Create our Gamestate
 local DinoGame = {}
@@ -17,6 +18,10 @@ local Barrier = require("entities.barrier")
 local FNAME = "dinoscores"
 local MAX_ENTRIES = 5
 
+-- Level stuff
+-- TODO: tweak
+local levelDiff = 100
+
 -- Global vars
 dino = nil
 ground = nil
@@ -29,6 +34,9 @@ function DinoGame:enter()
 
   -- Font size is different than menu and gameover screens
   love.graphics.setFont(love.graphics.newFont(14))
+
+  -- Seed random!
+  math.randomseed(os.time())
 
   -- We need collisions
   self.world = bump.newWorld(16)
@@ -47,20 +55,20 @@ function DinoGame:enter()
   self.paused = false
   self.score = 0
   self.scoreTable = {}
+  self.level = 1 -- one-indexing!!!
 
   -- Add dino and ground
   Entities:addMany({dino, ground})
-
-  self:addBarrier()
 
   Entities:getFirstBarrier()
 end
 
 function DinoGame:update(dt)
   if not Entities:gameover() and not self.paused then
-    -- self:shouldAddBarrier()
+    self:shouldAddBarrier()
     Entities:update(dt)
     self:updateScore()
+    self:updateLevel()
   end
 end
 
@@ -69,15 +77,24 @@ function DinoGame:updateScore()
   self.score = self.score + 0.2
 end
 
+function DinoGame:updateLevel()
+  -- use math.ceil cause 1-indexing
+  local level = math.ceil(self.score / levelDiff)
+  if level > #Levels then level = #Levels end
+  self.level = level
+end
+
 -- This function adds a barrier (if we should)
 function DinoGame:shouldAddBarrier()
   lastBarrier = Entities:getLastBarrier()
+  local level = Levels[self.level]
+  local dist = math.random(unpack(level.dists))
 
   -- Add barrier if last barrier is a certain distance from right edge, or
   -- if there are no current barriers.
   if lastBarrier then
     fromEdgeDist = love.graphics.getWidth() - lastBarrier:rightPos()
-    if fromEdgeDist > 100 then -- TODO: constant
+    if fromEdgeDist > dist then -- TODO: constant
       self:addBarrier()
     end
   else
@@ -87,8 +104,11 @@ end
 
 -- This function adds a new barrier
 function DinoGame:addBarrier()
-  local bWidth, bHeight = 30, 60
-  newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - bHeight, bWidth, bHeight)
+  local level = Levels[self.level]
+  local width = math.random(unpack(level.widths))
+  local height = math.random(unpack(level.heights))
+
+  newBarrier = Barrier(self.world, love.graphics.getWidth(), self.groundY - height, width, height)
   Entities:add(newBarrier)
 end
 
