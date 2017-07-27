@@ -19,8 +19,7 @@ local FNAME = "dinoscores"
 local MAX_ENTRIES = 5
 
 -- Level stuff
--- TODO: tweak
-local levelDiff = 100
+local levelDiff = 150
 local baseSpeed = 350
 
 -- Global vars
@@ -88,9 +87,9 @@ function DinoGame:updateLevel()
 end
 
 function DinoGame:updateSpeed()
-  -- Increase speed by 100 every time the score goes up by 300
+  -- Increase speed by 100 every time the score goes up by 500
   -- i.e. increase = (score / 300) * 100
-  local increase = (self.score / 3) * 1
+  local increase = (self.score / 5) * 1
   -- Cap speed at 600
   self.speed = math.min(baseSpeed + increase, 600)
 end
@@ -105,7 +104,7 @@ function DinoGame:shouldAddBarrier()
   -- if there are no current barriers.
   if lastBarrier then
     fromEdgeDist = love.graphics.getWidth() - lastBarrier:rightPos()
-    if fromEdgeDist > dist then -- TODO: constant
+    if fromEdgeDist > dist then
       self:addBarrier()
     end
   else
@@ -130,7 +129,7 @@ function DinoGame:draw()
   Entities:draw()
   love.graphics.setColor(Colors.white)
   love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
-  love.graphics.print(math.floor(self.speed), 10, 25)
+  -- love.graphics.print(math.floor(self.speed), 10, 25)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
     local y = 125
