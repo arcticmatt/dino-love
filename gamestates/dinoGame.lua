@@ -1,8 +1,9 @@
-bump      = require("libs.bump.bump")
-Gamestate = require("libs.hump.gamestate")
-local Entities = require("entities.Entities")
-local Entity   = require("entities.Entity")
-local Colors   = require("utils.Colors")
+local bump      = require("libs.bump.bump")
+local Gamestate = require("libs.hump.gamestate")
+local serpent   = require("libs.serpent.src.serpent")
+local Entities  = require("entities.Entities")
+local Entity    = require("entities.Entity")
+local Colors    = require("utils.Colors")
 
 -- Create our Gamestate
 local DinoGame = {}
@@ -12,13 +13,20 @@ local Dino    = require("entities.dino")
 local Ground  = require("entities.ground")
 local Barrier = require("entities.barrier")
 
+-- Filesystem stuff
+local FNAME = "dinoscores"
+local MAX_ENTRIES = 5
+
 -- Global vars
 dino = nil
 ground = nil
 
 function DinoGame:enter()
+  -- Restart stuff
   -- Clear entities (need for restarting, but good practice anyways)
   Entities:clear()
+  self:saveScore()
+
   -- Font size is different than menu and gameover screens
   love.graphics.setFont(love.graphics.newFont(14))
 
@@ -38,6 +46,7 @@ function DinoGame:enter()
   self.groundY = gY
   self.paused = false
   self.score = 0
+  self.scoreTable = {}
 
   -- Add dino and ground
   Entities:addMany({dino, ground})
@@ -89,7 +98,14 @@ function DinoGame:draw()
   love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
   if Entities:gameover() then
     love.graphics.setColor(Colors.red)
-    love.graphics.printf("gameover",0,300, love.graphics.getWidth(), "center")
+    love.graphics.printf("gameover",0,200, love.graphics.getWidth(), "center")
+    -- Display high scores
+    local highscores = self:getHighscores()
+    love.graphics.setColor(Colors.green)
+    for k,v in ipairs(highscores) do
+      local scoreStr = string.format("%d) %d", k, v)
+      love.graphics.printf(scoreStr,0,200 + 25 * k, love.graphics.getWidth(), "center")
+    end
   end
 end
 
@@ -111,6 +127,40 @@ function DinoGame:keyreleased(key)
   elseif key == "r" then
     Gamestate.enter(DinoGame) -- restart
   end
+end
+
+function DinoGame:quit()
+  -- Game won't be re-entered if we're quitting, so (potentially) save the
+  -- current score
+  self:saveScore()
+end
+
+-- Called both when entering (to handle restarts) and when quitting
+function DinoGame:saveScore()
+  if self.score then
+    local savedTable = self:getHighscores()
+    -- Add new score to table, preserving sortedness
+    -- Add if we haven't reached MAX_ENTRIES, or if the current score is
+    -- greater than the least entry.
+    if #savedTable < MAX_ENTRIES or savedTable[MAX_ENTRIES] < self.score then
+      if #savedTable >= MAX_ENTRIES then table.remove(savedTable) end
+      table.insert(savedTable, self.score)
+      table.sort(savedTable, function(a, b) return a > b end) -- descending
+    end
+
+    -- Save table, overwriting old one
+    love.filesystem.write(FNAME, serpent.dump(savedTable))
+  end
+end
+
+function DinoGame:getHighscores()
+  -- Retrieve serialized table
+  local savedText = love.filesystem.read(FNAME)
+  -- Deserialize it (use empty table if savedText is nil)
+  local savedTable = {}
+  if savedText then _, savedTable = serpent.load(savedText) end
+  -- Return it
+  return savedTable
 end
 
 return DinoGame
