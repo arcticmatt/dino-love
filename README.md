@@ -1,8 +1,6 @@
 # dino 
 Chrome's no-wifi game made with [LÖVE](https://love2d.org/)
 
-![dino-gif](./img/dino.gif)
-
 ## installation
 If you're installing on a mac, then you can [use the binary attached to the Github release](#github-release-binaries). 
 Otherwise, you should [install LÖVE](https://love2d.org/) and
