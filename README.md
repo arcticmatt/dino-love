@@ -12,7 +12,7 @@ see the [corresponding instructions](#install-with-LÖVE).
 
 Install and run on macOS with the following commands:
 ```bash
-curl -L https://github.com/arcticmatt/dino-love/releases/download/0.1.0/dino-love_osx.zip -o dino-love_osx.zip
+curl -L https://github.com/arcticmatt/dino-love/releases/download/0.1.1/dino-love_osx.zip -o dino-love_osx.zip
 unzip dino-love_osx.zip
 open dino-love.app
 ```
@@ -24,7 +24,7 @@ attached to the Github release. The following commands download the
 exectuable and run it with LÖVE.
 
 ```bash
-curl -L https://github.com/arcticmatt/dino-love/releases/download/0.1.0/dino-love.love -o dino-love.love
+curl -L https://github.com/arcticmatt/dino-love/releases/download/0.1.1/dino-love.love -o dino-love.love
 love dino-love.love
 ```
 
