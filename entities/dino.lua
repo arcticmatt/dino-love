@@ -3,6 +3,8 @@ local Entity = require("entities.Entity")
 local Types  = require("entities.Types")
 local Colors = require("utils.Colors")
 
+local time
+
 local Dino = Class{
   __includes = Entity -- Player class inherits our Entity class
 }
@@ -30,6 +32,34 @@ function Dino:init(world, x, y, w, h)
   self.type = Types.dino
 
   self.gameover = false
+  time = 0
+  self.myShader = love.graphics.newShader[[
+  extern number time;
+  #define TWO_PI 6.28318530718
+  vec3 hsb2rgb( in vec3 c ){
+      vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                               6.0)-3.0)-1.0,
+                       0.0,
+                       1.0 );
+      rgb = rgb*rgb*(3.0-2.0*rgb);
+      return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  vec4 effect( vec4 color, Image texture,
+  	vec2 texture_coords, vec2 screen_coords ){
+  	vec2 st = gl_FragCoord.xy/love_ScreenSize.xy;
+      vec3 color2 = vec3(0.0);
+      // Use polar coordinates instead of cartesian
+      vec2 toCenter = vec2(0.5)-st;
+      float angle = atan(toCenter.y,toCenter.x);
+      float radius = length(toCenter)*2.0;
+
+      // Map the angle (-PI to PI) to the Hue (from 0 to 1)
+      // and the Saturation to the radius
+      color2 = hsb2rgb(vec3(sin(time) * (angle/TWO_PI)+0.5,radius,1.0));
+      return vec4(color2,1.0);
+  }
+
+  ]]
 end
 
 function Dino:collisionFilter(other)
@@ -96,6 +126,9 @@ function Dino:update(dt)
       end
     end
   end
+
+  time = time + dt
+  self.myShader:send("time",time)
 end
 
 -- Helper function
@@ -115,8 +148,10 @@ function Dino:setDirection(newDir)
 end
 
 function Dino:draw()
-  love.graphics.setColor(unpack(self.color))
+  -- love.graphics.setColor(unpack(self.color))
+  love.graphics.setShader(self.myShader)
   love.graphics.rectangle("fill", self:getRect())
+  love.graphics.setShader()
 end
 
 -- Used by DinoGame Gamestate
