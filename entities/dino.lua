@@ -149,7 +149,6 @@ end
 
 function Dino:draw()
   -- love.graphics.setColor(unpack(self.color))
-  -- love.graphics.rectangle("fill", self:getRect())
   love.graphics.setShader(self.myShader)
   love.graphics.rectangle("fill", self:getRect())
   love.graphics.setShader()
